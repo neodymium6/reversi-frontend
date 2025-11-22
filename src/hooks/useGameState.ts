@@ -18,6 +18,7 @@ const initialGameState: GameState = {
 export const useGameState = () => {
     const [screen, setScreen] = useState<GameScreen>('welcome');
     const [gameState, setGameState] = useState<GameState>(initialGameState);
+    const [passedPlayer, setPassedPlayer] = useState<1 | 2 | null>(null);
 
     const handleStartGame = async () => {
         setGameState({ ...gameState, isLoading: true });
@@ -26,7 +27,7 @@ export const useGameState = () => {
         try {
             const response = await startNewGame();
             setGameState({
-                gameId: crypto.randomUUID(),
+                gameId: response.gameId,
                 board: response.board,
                 currentPlayer: response.currentPlayer,
                 score: response.score,
@@ -71,6 +72,16 @@ export const useGameState = () => {
                 isLoading: false,
             });
 
+            // Handle pass notification
+            if (response.passed) {
+                // The player who passed is the opposite of the current player
+                // (current player is after the pass, so the other player passed)
+                const playerWhoPassed = response.currentPlayer === 1 ? 2 : 1;
+                setPassedPlayer(playerWhoPassed);
+                // Auto-hide toast after 3 seconds
+                setTimeout(() => setPassedPlayer(null), 3000);
+            }
+
             if (response.gameOver) {
                 setScreen('gameOver');
             }
@@ -88,6 +99,7 @@ export const useGameState = () => {
     return {
         screen,
         gameState,
+        passedPlayer,
         handleStartGame,
         handleCellClick,
         handleReset,

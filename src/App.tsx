@@ -4,7 +4,7 @@ import Board from './components/Board';
 import GameInfo from './components/GameInfo';
 
 function App() {
-  const { screen, gameState, handleStartGame, handleCellClick, handleReset } = useGameState();
+  const { screen, gameState, passedPlayer, handleStartGame, handleCellClick, handleReset } = useGameState();
 
   // Welcome Screen
   if (screen === 'welcome') {
@@ -31,6 +31,15 @@ function App() {
   // Playing / Game Over Screen
   return (
     <div className="min-h-screen flex items-center justify-center p-8">
+      {/* Pass Notification Toast */}
+      {passedPlayer && (
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-yellow-500 text-black px-6 py-3 rounded-lg shadow-lg font-semibold">
+            {passedPlayer === 1 ? 'Black' : 'White'} passed - No legal moves
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
         {/* Board */}
         <div className="relative">

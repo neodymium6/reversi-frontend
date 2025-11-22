@@ -54,12 +54,14 @@ export type GameScreen = 'welcome' | 'playing' | 'gameOver';
  * API Response for game state
  */
 export interface GameStateResponse {
+    gameId: string;
     board: BoardState;
     currentPlayer: Player;
     score: Score;
     legalMoves: Position[];
     gameOver: boolean;
     winner?: Player | null;
+    passed?: boolean;
 }
 
 /**
