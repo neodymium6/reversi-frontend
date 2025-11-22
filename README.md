@@ -23,7 +23,7 @@ A modern web-based Reversi (Othello) game built with React, TypeScript, and Vite
 
 - Node.js (v18 or higher recommended)
 - npm or yarn
-- Backend API running (see [reversi-backend](../reversi-backend))
+- Backend API running (see [reversi-backend](https://github.com/neodymium6/reversi-backend))
 
 ## Setup
 
@@ -92,7 +92,7 @@ src/
 
 The frontend communicates with a separate backend API. Make sure the backend is running before starting the frontend development server.
 
-For backend setup instructions, see the [reversi-backend](../reversi-backend) directory.
+For backend setup instructions, see the [reversi-backend](https://github.com/neodymium6/reversi-backend) repository.
 
 ## Building for Production
 
