@@ -4,6 +4,7 @@ import { useGameState } from './hooks/useGameState';
 import { getAIPlayers } from './api/gameApi';
 import Board from './components/Board';
 import GameInfo from './components/GameInfo';
+import GameOverModal from './components/GameOverModal';
 import type { AIPlayerInfo, Player, AIPlayerSettings } from './types/game';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
   const [selectedMode, setSelectedMode] = useState<'pvp' | 'ai'>('pvp');
   const [selectedAI, setSelectedAI] = useState<string>('');
   const [selectedAIColor, setSelectedAIColor] = useState<Player>(2);
+  const [showGameOverModal, setShowGameOverModal] = useState(false);
 
   useEffect(() => {
     const fetchAIPlayers = async () => {
@@ -28,6 +30,15 @@ function App() {
 
     fetchAIPlayers();
   }, []);
+
+  // Show modal when game is over
+  useEffect(() => {
+    if (gameState.gameOver) {
+      setShowGameOverModal(true);
+    } else {
+      setShowGameOverModal(false);
+    }
+  }, [gameState.gameOver]);
 
   const handleStartGameClick = () => {
     if (selectedMode === 'ai' && selectedAI) {
@@ -168,6 +179,17 @@ function App() {
             {passedPlayer === 1 ? 'Black' : 'White'} passed - No legal moves
           </div>
         </div>
+      )}
+
+      {/* Game Over Modal */}
+      {showGameOverModal && gameState.gameOver && (
+        <GameOverModal
+          winner={gameState.winner}
+          score={gameState.score}
+          onPlayAgain={handleReset}
+          onClose={() => setShowGameOverModal(false)}
+          aiInfo={gameState.aiPlayer ? { color: gameState.aiPlayer.aiColor } : undefined}
+        />
       )}
 
       <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">

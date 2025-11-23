@@ -86,10 +86,6 @@ export const useGameState = () => {
                 // Auto-hide toast after 3 seconds
                 setTimeout(() => setPassedPlayer(null), 3000);
             }
-
-            if (response.gameOver) {
-                setScreen('gameOver');
-            }
         } catch (error) {
             console.error('Failed to make move:', error);
             setGameState({ ...gameState, isLoading: false });
@@ -150,10 +146,6 @@ export const useGameState = () => {
                     const playerWhoPassed = response.currentPlayer === 1 ? 2 : 1;
                     setPassedPlayer(playerWhoPassed);
                     setTimeout(() => setPassedPlayer(null), 3000);
-                }
-
-                if (response.gameOver) {
-                    setScreen('gameOver');
                 }
             } catch (error) {
                 console.error('Failed to make AI move:', error);
