@@ -10,6 +10,8 @@ A modern web-based Reversi (Othello) game built with React, TypeScript, and Vite
 - Pass handling with visual notifications
 - Score tracking
 - Game over detection with winner announcement
+- AI opponent support
+- Player vs Player and Player vs AI game modes
 
 ## Tech Stack
 
@@ -18,6 +20,14 @@ A modern web-based Reversi (Othello) game built with React, TypeScript, and Vite
 - **Vite** - Build tool and dev server
 - **Tailwind CSS v4** - Styling
 - **ESLint** - Code quality
+
+## Game Modes
+
+### Player vs Player
+Play against another human player on the same device.
+
+### Player vs AI
+Play against an AI opponent. Select from available AI players and choose which color the AI plays.
 
 ## Prerequisites
 
