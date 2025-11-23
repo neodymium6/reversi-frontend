@@ -6,7 +6,17 @@ import type {
     AIMoveRequest,
 } from '../types/game';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+// Extend window type to include runtime environment config
+declare global {
+    interface Window {
+        env?: {
+            VITE_BACKEND_URL?: string;
+        };
+    }
+}
+
+// Try runtime config first (Docker), fallback to build-time config (dev)
+const API_BASE_URL = window.env?.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL;
 
 if (!API_BASE_URL) {
     throw new Error('VITE_BACKEND_URL environment variable is not set');

@@ -1,0 +1,9 @@
+# Production deployment example using pre-built image from GHCR
+services:
+  reversi-frontend:
+    image: ghcr.io/neodymium6/reversi-frontend:latest
+    ports:
+      - "80:80"
+    environment:
+      - VITE_BACKEND_URL=https://your-backend.com/api
+    restart: unless-stopped

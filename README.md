@@ -112,6 +112,50 @@ npm run build
 
 The build output will be in the `dist/` directory.
 
+## Docker
+
+### Quick Start with Docker
+
+Pull the latest image from GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/neodymium6/reversi-frontend:latest
+```
+
+Run with default backend URL (`http://localhost:8000/api`):
+
+```bash
+docker run -d -p 80:80 --name reversi-frontend ghcr.io/neodymium6/reversi-frontend:latest
+```
+
+Run with custom backend URL:
+
+```bash
+docker run -d -p 80:80 \
+  -e VITE_BACKEND_URL=http://your-backend-url/api \
+  --name reversi-frontend \
+  ghcr.io/neodymium6/reversi-frontend:latest
+```
+
+The app will be available at `http://localhost`
+
+### Building Locally
+
+```bash
+docker build -t reversi-frontend:latest .
+docker run -d -p 80:80 -e VITE_BACKEND_URL=http://localhost:8000/api reversi-frontend:latest
+```
+
+### Environment Variables
+
+The backend URL can be configured at **runtime** using the `-e` flag:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_BACKEND_URL` | Backend API URL | `http://localhost:8000/api` |
+
+**Note:** Unlike traditional Vite apps, this application supports runtime environment configuration in Docker, so you don't need to rebuild the image to change the backend URL.
+
 ## License
 
 See LICENSE file for details.
