@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import type { GameState, GameScreen, Position } from '../types/game';
-import { startNewGame, makeMove } from '../api/gameApi';
+import { useState, useEffect, useRef } from 'react';
+import type { GameState, GameScreen, Position, AIPlayerSettings } from '../types/game';
+import { startNewGame, makeMove, makeAIMove } from '../api/gameApi';
 
 const initialGameState: GameState = {
     gameId: null,
@@ -13,19 +13,23 @@ const initialGameState: GameState = {
     gameOver: false,
     winner: null,
     isLoading: false,
+    aiPlayer: undefined,
 };
 
 export const useGameState = () => {
     const [screen, setScreen] = useState<GameScreen>('welcome');
     const [gameState, setGameState] = useState<GameState>(initialGameState);
     const [passedPlayer, setPassedPlayer] = useState<1 | 2 | null>(null);
+    const isProcessingAIMove = useRef(false);
 
-    const handleStartGame = async () => {
+    const handleStartGame = async (aiPlayer?: AIPlayerSettings) => {
         setGameState({ ...gameState, isLoading: true });
         setScreen('playing');
 
         try {
-            const response = await startNewGame();
+            const response = await startNewGame(
+                aiPlayer ? { aiPlayer } : undefined
+            );
             setGameState({
                 gameId: response.gameId,
                 board: response.board,
@@ -35,6 +39,7 @@ export const useGameState = () => {
                 gameOver: response.gameOver,
                 winner: response.winner || null,
                 isLoading: false,
+                aiPlayer: aiPlayer,
             });
         } catch (error) {
             console.error('Failed to start game:', error);
@@ -61,8 +66,8 @@ export const useGameState = () => {
                 position,
             });
 
-            setGameState({
-                ...gameState,
+            setGameState((prev) => ({
+                ...prev,
                 board: response.board,
                 currentPlayer: response.currentPlayer,
                 score: response.score,
@@ -70,7 +75,7 @@ export const useGameState = () => {
                 gameOver: response.gameOver,
                 winner: response.winner || null,
                 isLoading: false,
-            });
+            }));
 
             // Handle pass notification
             if (response.passed) {
@@ -94,7 +99,62 @@ export const useGameState = () => {
     const handleReset = () => {
         setGameState(initialGameState);
         setScreen('welcome');
+        isProcessingAIMove.current = false;
     };
+
+    // Auto AI move effect
+    useEffect(() => {
+        const shouldMakeAIMove =
+            gameState.aiPlayer &&
+            gameState.gameId &&
+            !gameState.gameOver &&
+            !gameState.isLoading &&
+            gameState.currentPlayer === gameState.aiPlayer.aiColor &&
+            !isProcessingAIMove.current;
+
+        if (!shouldMakeAIMove) return;
+
+        const makeAIMoveAsync = async () => {
+            isProcessingAIMove.current = true;
+            setGameState((prev) => ({ ...prev, isLoading: true }));
+
+            // Add a small delay to make AI move visible
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            try {
+                const response = await makeAIMove({ gameId: gameState.gameId! });
+
+                setGameState((prev) => ({
+                    ...prev,
+                    board: response.board,
+                    currentPlayer: response.currentPlayer,
+                    score: response.score,
+                    legalMoves: response.legalMoves,
+                    gameOver: response.gameOver,
+                    winner: response.winner || null,
+                    isLoading: false,
+                }));
+
+                // Handle pass notification
+                if (response.passed) {
+                    const playerWhoPassed = response.currentPlayer === 1 ? 2 : 1;
+                    setPassedPlayer(playerWhoPassed);
+                    setTimeout(() => setPassedPlayer(null), 3000);
+                }
+
+                if (response.gameOver) {
+                    setScreen('gameOver');
+                }
+            } catch (error) {
+                console.error('Failed to make AI move:', error);
+                setGameState((prev) => ({ ...prev, isLoading: false }));
+            } finally {
+                isProcessingAIMove.current = false;
+            }
+        };
+
+        makeAIMoveAsync();
+    }, [gameState.currentPlayer, gameState.gameOver, gameState.isLoading, gameState.gameId, gameState.aiPlayer]);
 
     return {
         screen,

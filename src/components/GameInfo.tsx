@@ -6,6 +6,7 @@ interface GameInfoProps {
     gameOver: boolean;
     winner: Player | null;
     onReset: () => void;
+    isAIThinking?: boolean;
 }
 
 export default function GameInfo({
@@ -14,6 +15,7 @@ export default function GameInfo({
     gameOver,
     winner,
     onReset,
+    isAIThinking = false,
 }: GameInfoProps) {
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl min-w-[250px]">
@@ -60,7 +62,9 @@ export default function GameInfo({
                         <p className="text-sm text-gray-300 mb-1">Current Turn</p>
                         <div className="flex items-center justify-center gap-2">
                             <div
-                                className={`w-4 h-4 rounded-full ${currentPlayer === 1
+                                className={`w-4 h-4 rounded-full ${
+                                    isAIThinking ? 'animate-pulse' : ''
+                                } ${currentPlayer === 1
                                     ? 'bg-gradient-to-br from-gray-800 to-black'
                                     : 'bg-gradient-to-br from-gray-100 to-white'
                                     }`}
@@ -69,6 +73,11 @@ export default function GameInfo({
                                 {currentPlayer === 1 ? 'Black' : 'White'}
                             </span>
                         </div>
+                        {isAIThinking && (
+                            <div className="mt-3 text-sm text-green-400 animate-pulse">
+                                🤖 AI is thinking...
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

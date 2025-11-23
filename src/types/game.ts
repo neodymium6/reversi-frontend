@@ -43,6 +43,7 @@ export interface GameState {
     gameOver: boolean;
     winner: Player | null;
     isLoading: boolean;
+    aiPlayer?: AIPlayerSettings;
 }
 
 /**
@@ -71,4 +72,35 @@ export interface MakeMoveRequest {
     gameId: string;
     position: Position;
     thinkingTime?: number;
+}
+
+/**
+ * AI Player information
+ */
+export interface AIPlayerInfo {
+    id: string;
+    name: string;
+    description: string;
+}
+
+/**
+ * AI Player settings for game creation
+ */
+export interface AIPlayerSettings {
+    aiPlayerId: string;
+    aiColor: Player;
+}
+
+/**
+ * Request to create a new game (with optional AI)
+ */
+export interface CreateGameRequest {
+    aiPlayer?: AIPlayerSettings;
+}
+
+/**
+ * Request for AI to make a move
+ */
+export interface AIMoveRequest {
+    gameId: string;
 }

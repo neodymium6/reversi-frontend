@@ -5,9 +5,10 @@ interface BoardProps {
     board: BoardState;
     legalMoves: Position[];
     onCellClick: (position: Position) => void;
+    disabled?: boolean;
 }
 
-export default function Board({ board, legalMoves, onCellClick }: BoardProps) {
+export default function Board({ board, legalMoves, onCellClick, disabled = false }: BoardProps) {
     const isLegalMove = (row: number, col: number): boolean => {
         return legalMoves.some((move) => move.row === row && move.col === col);
     };
@@ -22,6 +23,7 @@ export default function Board({ board, legalMoves, onCellClick }: BoardProps) {
                             state={cell}
                             isLegalMove={isLegalMove(rowIndex, colIndex)}
                             onClick={() => onCellClick({ row: rowIndex, col: colIndex })}
+                            disabled={disabled}
                         />
                     ))
                 )}
