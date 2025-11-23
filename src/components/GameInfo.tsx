@@ -1,5 +1,10 @@
 import type { Player, Score } from '../types/game';
 
+interface AIInfo {
+    name: string;
+    color: Player;
+}
+
 interface GameInfoProps {
     currentPlayer: Player;
     score: Score;
@@ -7,6 +12,7 @@ interface GameInfoProps {
     winner: Player | null;
     onReset: () => void;
     isAIThinking?: boolean;
+    aiInfo?: AIInfo;
 }
 
 export default function GameInfo({
@@ -16,6 +22,7 @@ export default function GameInfo({
     winner,
     onReset,
     isAIThinking = false,
+    aiInfo,
 }: GameInfoProps) {
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl min-w-[250px]">
@@ -81,6 +88,28 @@ export default function GameInfo({
                     </div>
                 )}
             </div>
+
+            {/* AI Player Info */}
+            {aiInfo && (
+                <div className="mb-6 p-4 bg-white/5 rounded-lg">
+                    <div className="text-xs text-gray-300 mb-1 text-center">Playing Against</div>
+                    <div className="flex items-center justify-center gap-2">
+                        <span className="text-sm font-semibold">🤖 {aiInfo.name}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1 mt-2">
+                        <div
+                            className={`w-3 h-3 rounded-full ${
+                                aiInfo.color === 1
+                                    ? 'bg-gradient-to-br from-gray-800 to-black'
+                                    : 'bg-gradient-to-br from-gray-100 to-white'
+                            }`}
+                        />
+                        <span className="text-xs text-gray-300">
+                            {aiInfo.color === 1 ? 'Black' : 'White'}
+                        </span>
+                    </div>
+                </div>
+            )}
 
             {/* Reset Button */}
             <button

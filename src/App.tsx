@@ -151,6 +151,14 @@ function App() {
   }
 
   // Playing / Game Over Screen
+  // Get AI info if playing against AI
+  const aiInfo = gameState.aiPlayer
+    ? {
+        name: aiPlayers.find(ai => ai.id === gameState.aiPlayer?.aiPlayerId)?.name || 'AI Player',
+        color: gameState.aiPlayer.aiColor,
+      }
+    : undefined;
+
   return (
     <div className="min-h-screen flex items-center justify-center p-8">
       {/* Pass Notification Toast */}
@@ -179,6 +187,7 @@ function App() {
           winner={gameState.winner}
           onReset={handleReset}
           isAIThinking={gameState.isLoading && gameState.aiPlayer !== undefined}
+          aiInfo={aiInfo}
         />
       </div>
     </div>
