@@ -5,6 +5,7 @@ A modern web-based Reversi (Othello) game built with React, TypeScript, and Vite
 ## Features
 
 - Clean, professional UI with green/white/black color scheme
+- Fully responsive design for mobile, tablet, and desktop
 - Real-time game state updates
 - Legal move indicators
 - Pass handling with visual notifications

@@ -14,7 +14,7 @@ export default function Board({ board, legalMoves, onCellClick, disabled = false
     };
 
     return (
-        <div className="inline-block p-4 bg-green-950 rounded-xl shadow-2xl">
+        <div className="inline-block p-2 sm:p-3 md:p-4 bg-green-950 rounded-xl shadow-2xl max-w-[95vw] sm:max-w-none">
             <div className="grid grid-cols-8 gap-0">
                 {board.map((row, rowIndex) =>
                     row.map((cell, colIndex) => (

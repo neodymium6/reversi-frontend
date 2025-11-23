@@ -55,22 +55,22 @@ function App() {
   // Welcome Screen
   if (screen === 'welcome') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8">
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="text-center max-w-lg w-full">
-          <h1 className="text-7xl font-bold text-white mb-6 tracking-wider">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-6 tracking-wider">
             REVERSI
           </h1>
-          <p className="text-xl text-gray-400 mb-12 font-light">
+          <p className="text-lg sm:text-xl text-gray-400 mb-6 sm:mb-8 md:mb-12 font-light">
             Strategy Board Game
           </p>
 
           {/* Game Mode Selection */}
-          <div className="mb-8 bg-white/10 backdrop-blur-md rounded-xl p-6">
-            <h2 className="text-lg font-semibold mb-4">Game Mode</h2>
-            <div className="flex gap-4 mb-6">
+          <div className="mb-6 sm:mb-8 bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-5 md:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Game Mode</h2>
+            <div className="flex gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
               <button
                 onClick={() => setSelectedMode('pvp')}
-                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
+                className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-200 ${
                   selectedMode === 'pvp'
                     ? 'bg-green-800 border-2 border-green-600'
                     : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
@@ -80,7 +80,7 @@ function App() {
               </button>
               <button
                 onClick={() => setSelectedMode('ai')}
-                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
+                className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-200 ${
                   selectedMode === 'ai'
                     ? 'bg-green-800 border-2 border-green-600'
                     : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
@@ -92,25 +92,25 @@ function App() {
 
             {/* AI Settings (shown only when AI mode is selected) */}
             {selectedMode === 'ai' && (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* AI Player Selection */}
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-left">
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-left">
                     AI Player
                   </label>
                   <select
                     value={selectedAI}
                     onChange={(e) => setSelectedAI(e.target.value)}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    className="w-full px-3 sm:px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-green-600"
                   >
                     {aiPlayers.map((ai) => (
-                      <option key={ai.id} value={ai.id} className="bg-gray-900">
+                      <option key={ai.id} value={ai.id} className="bg-gray-900 text-white">
                         {ai.name}
                       </option>
                     ))}
                   </select>
                   {selectedAI && aiPlayers.find(ai => ai.id === selectedAI) && (
-                    <p className="text-xs text-gray-400 mt-2 text-left">
+                    <p className="text-xs sm:text-sm text-gray-400 mt-2 text-left">
                       {aiPlayers.find(ai => ai.id === selectedAI)?.description}
                     </p>
                   )}
@@ -118,31 +118,31 @@ function App() {
 
                 {/* AI Color Selection */}
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-left">
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-left">
                     AI Color
                   </label>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 sm:gap-3">
                     <button
                       onClick={() => setSelectedAIColor(1)}
-                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-2 px-2 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 ${
                         selectedAIColor === 1
                           ? 'bg-gray-800 border-2 border-gray-600'
                           : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
                       }`}
                     >
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-800 to-black" />
-                      Black
+                      <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-gray-800 to-black flex-shrink-0" />
+                      <span>Black</span>
                     </button>
                     <button
                       onClick={() => setSelectedAIColor(2)}
-                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-2 px-2 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 ${
                         selectedAIColor === 2
                           ? 'bg-gray-100 text-gray-900 border-2 border-gray-300'
                           : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
                       }`}
                     >
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-100 to-white" />
-                      White
+                      <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-gray-100 to-white flex-shrink-0" />
+                      <span>White</span>
                     </button>
                   </div>
                 </div>
@@ -152,7 +152,7 @@ function App() {
 
           <button
             onClick={handleStartGameClick}
-            className="px-12 py-4 bg-green-800 hover:bg-green-700 border border-green-700 rounded-lg font-semibold text-lg transition-all duration-200 shadow-xl w-full"
+            className="px-8 sm:px-10 md:px-12 py-3 sm:py-4 bg-green-800 hover:bg-green-700 border border-green-700 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-xl w-full"
           >
             Start Game
           </button>
@@ -171,7 +171,7 @@ function App() {
     : undefined;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-8">
       {/* Pass Notification Toast */}
       {passedPlayer && (
         <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
@@ -192,7 +192,7 @@ function App() {
         />
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 items-center lg:items-start w-full max-w-6xl">
         {/* Board */}
         <Board
           board={gameState.board}

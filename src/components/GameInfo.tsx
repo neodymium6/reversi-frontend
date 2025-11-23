@@ -25,7 +25,7 @@ export default function GameInfo({
     aiInfo,
 }: GameInfoProps) {
     return (
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl min-w-[250px]">
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-2xl w-full lg:min-w-[250px] lg:w-auto">
             {/* Score Display */}
             <div className="mb-6">
                 <h2 className="text-xl font-bold mb-4 text-center text-white tracking-wide">
@@ -80,9 +80,21 @@ export default function GameInfo({
                                 {currentPlayer === 1 ? 'Black' : 'White'}
                             </span>
                         </div>
-                        {isAIThinking && (
-                            <div className="mt-3 text-sm text-green-400 animate-pulse">
-                                🤖 AI is thinking...
+                        {aiInfo && (
+                            <div className="mt-3 text-sm h-5 flex items-center justify-center">
+                                {isAIThinking ? (
+                                    <span className="text-green-400 animate-pulse">
+                                        🤖 AI is thinking...
+                                    </span>
+                                ) : currentPlayer !== aiInfo.color ? (
+                                    <span className="text-blue-400">
+                                        👤 Your Turn
+                                    </span>
+                                ) : (
+                                    <span className="text-gray-500">
+                                        🤖 AI's Turn
+                                    </span>
+                                )}
                             </div>
                         )}
                     </div>
