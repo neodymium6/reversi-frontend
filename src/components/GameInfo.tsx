@@ -82,17 +82,9 @@ export default function GameInfo({
                         </div>
                         {aiInfo && (
                             <div className="mt-3 text-sm h-5 flex items-center justify-center">
-                                {isAIThinking ? (
+                                {isAIThinking && (
                                     <span className="text-green-400 animate-pulse">
                                         🤖 AI is thinking...
-                                    </span>
-                                ) : currentPlayer !== aiInfo.color ? (
-                                    <span className="text-blue-400">
-                                        👤 Your Turn
-                                    </span>
-                                ) : (
-                                    <span className="text-gray-500">
-                                        🤖 AI's Turn
                                     </span>
                                 )}
                             </div>
