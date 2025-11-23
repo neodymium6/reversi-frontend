@@ -80,3 +80,14 @@ export const makeAIMove = async (
     return response.json();
 };
 
+export const deleteGame = async (gameId: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/game/${gameId}`, {
+        method: 'DELETE',
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Failed to delete game');
+    }
+};
+

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import type { GameState, GameScreen, Position, AIPlayerSettings } from '../types/game';
-import { startNewGame, makeMove, makeAIMove } from '../api/gameApi';
+import { startNewGame, makeMove, makeAIMove, deleteGame } from '../api/gameApi';
 
 const initialGameState: GameState = {
     gameId: null,
@@ -96,7 +96,17 @@ export const useGameState = () => {
         }
     };
 
-    const handleReset = () => {
+    const handleReset = async () => {
+        // Delete game on backend if it exists
+        if (gameState.gameId) {
+            try {
+                await deleteGame(gameState.gameId);
+            } catch (error) {
+                console.error('Failed to delete game:', error);
+                // Continue with reset even if delete fails
+            }
+        }
+
         setGameState(initialGameState);
         setScreen('welcome');
         isProcessingAIMove.current = false;
