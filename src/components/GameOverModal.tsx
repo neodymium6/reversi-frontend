@@ -7,7 +7,7 @@ interface AIInfo {
 interface GameOverModalProps {
     winner: Player | null;
     score: Score;
-    onPlayAgain: () => void;
+    onPlayAgain: () => void | Promise<void>;
     onClose: () => void;
     aiInfo?: AIInfo;
 }

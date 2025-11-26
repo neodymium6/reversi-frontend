@@ -1,8 +1,9 @@
-import type { Player, Score } from '../types/game';
+import type { AIStatistics, Player, Score } from '../types/game';
 
 interface AIInfo {
     name: string;
     color: Player;
+    statistics?: AIStatistics;
 }
 
 interface GameInfoProps {
@@ -24,6 +25,16 @@ export default function GameInfo({
     isAIThinking = false,
     aiInfo,
 }: GameInfoProps) {
+    const formatPercentage = (value: number | null | undefined) => {
+        if (value === null || value === undefined) return 'N/A';
+        return `${Math.round(value * 100)}%`;
+    };
+
+    const formatScore = (value: number | null | undefined) => {
+        if (value === null || value === undefined) return 'N/A';
+        return value.toFixed(1);
+    };
+
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-2xl w-full lg:min-w-[250px] lg:w-auto">
             {/* Score Display */}
@@ -112,6 +123,30 @@ export default function GameInfo({
                             {aiInfo.color === 1 ? 'Black' : 'White'}
                         </span>
                     </div>
+                    {aiInfo.statistics && (
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <p className="text-[11px] text-gray-400">Games</p>
+                                <p className="font-semibold">{aiInfo.statistics.totalGames}</p>
+                            </div>
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <p className="text-[11px] text-gray-400">Win Rate</p>
+                                <p className="font-semibold">{formatPercentage(aiInfo.statistics.winRate)}</p>
+                            </div>
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <p className="text-[11px] text-gray-400">Black Win Rate</p>
+                                <p className="font-semibold">{formatPercentage(aiInfo.statistics.asBlackWinRate)}</p>
+                            </div>
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <p className="text-[11px] text-gray-400">White Win Rate</p>
+                                <p className="font-semibold">{formatPercentage(aiInfo.statistics.asWhiteWinRate)}</p>
+                            </div>
+                            <div className="bg-white/5 rounded-lg p-3 col-span-2">
+                                <p className="text-[11px] text-gray-400">Average Score</p>
+                                <p className="font-semibold">{formatScore(aiInfo.statistics.averageScore)}</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 

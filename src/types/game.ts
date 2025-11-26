@@ -81,6 +81,7 @@ export interface AIPlayerInfo {
     id: string;
     name: string;
     description: string;
+    statistics: AIStatistics;
 }
 
 /**
@@ -103,4 +104,18 @@ export interface CreateGameRequest {
  */
 export interface AIMoveRequest {
     gameId: string;
+}
+
+/**
+ * Statistics returned for each AI player
+ */
+export interface AIStatistics {
+    totalGames: number;
+    wins: number;
+    losses: number;
+    draws: number;
+    winRate: number | null;
+    asBlackWinRate: number | null;
+    asWhiteWinRate: number | null;
+    averageScore: number | null;
 }

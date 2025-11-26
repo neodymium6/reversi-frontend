@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useGameState } from './hooks/useGameState';
 import { getAIPlayers } from './api/gameApi';
 import Board from './components/Board';
@@ -13,34 +13,35 @@ function App() {
   const [selectedMode, setSelectedMode] = useState<'pvp' | 'ai'>('pvp');
   const [selectedAI, setSelectedAI] = useState<string>('');
   const [selectedAIColor, setSelectedAIColor] = useState<Player>(2);
-  const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const [hasClosedGameOverModal, setHasClosedGameOverModal] = useState(false);
 
-  useEffect(() => {
-    const fetchAIPlayers = async () => {
-      try {
-        const players = await getAIPlayers();
-        setAiPlayers(players);
-        if (players.length > 0) {
-          setSelectedAI(players[0].id);
-        }
-      } catch (error) {
-        console.error('Failed to fetch AI players:', error);
-      }
-    };
-
+  const handleResetWithRefresh = () => {
+    setHasClosedGameOverModal(false);
+    handleReset();
     fetchAIPlayers();
+  };
+
+  const fetchAIPlayers = useCallback(async () => {
+    try {
+      const players = await getAIPlayers();
+      setAiPlayers(players);
+      setSelectedAI((prev) => {
+        if (prev && players.some((player) => player.id === prev)) {
+          return prev;
+        }
+        return players[0]?.id || '';
+      });
+    } catch (error) {
+      console.error('Failed to fetch AI players:', error);
+    }
   }, []);
 
-  // Show modal when game is over
   useEffect(() => {
-    if (gameState.gameOver) {
-      setShowGameOverModal(true);
-    } else {
-      setShowGameOverModal(false);
-    }
-  }, [gameState.gameOver]);
+    fetchAIPlayers();
+  }, [fetchAIPlayers]);
 
   const handleStartGameClick = () => {
+    setHasClosedGameOverModal(false);
     if (selectedMode === 'ai' && selectedAI) {
       const aiSettings: AIPlayerSettings = {
         aiPlayerId: selectedAI,
@@ -51,6 +52,18 @@ function App() {
       handleStartGame();
     }
   };
+
+  const formatPercentage = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return 'N/A';
+    return `${Math.round(value * 100)}%`;
+  };
+
+  const formatScore = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return 'N/A';
+    return value.toFixed(1);
+  };
+
+  const selectedAIPlayer = selectedAI ? aiPlayers.find(ai => ai.id === selectedAI) : undefined;
 
   // Welcome Screen
   if (screen === 'welcome') {
@@ -109,10 +122,34 @@ function App() {
                       </option>
                     ))}
                   </select>
-                  {selectedAI && aiPlayers.find(ai => ai.id === selectedAI) && (
+                  {selectedAIPlayer && (
                     <p className="text-xs sm:text-sm text-gray-400 mt-2 text-left">
-                      {aiPlayers.find(ai => ai.id === selectedAI)?.description}
+                      {selectedAIPlayer.description}
                     </p>
+                  )}
+                  {selectedAIPlayer?.statistics && (
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
+                      <div className="bg-white/5 rounded-lg p-3 text-left">
+                        <p className="text-[11px] sm:text-xs text-gray-400">Games</p>
+                        <p className="font-semibold">{selectedAIPlayer.statistics.totalGames}</p>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3 text-left">
+                        <p className="text-[11px] sm:text-xs text-gray-400">Win Rate</p>
+                        <p className="font-semibold">{formatPercentage(selectedAIPlayer.statistics.winRate)}</p>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3 text-left">
+                        <p className="text-[11px] sm:text-xs text-gray-400">Black Win Rate</p>
+                        <p className="font-semibold">{formatPercentage(selectedAIPlayer.statistics.asBlackWinRate)}</p>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3 text-left">
+                        <p className="text-[11px] sm:text-xs text-gray-400">White Win Rate</p>
+                        <p className="font-semibold">{formatPercentage(selectedAIPlayer.statistics.asWhiteWinRate)}</p>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3 text-left col-span-2">
+                        <p className="text-[11px] sm:text-xs text-gray-400">Average Score</p>
+                        <p className="font-semibold">{formatScore(selectedAIPlayer.statistics.averageScore)}</p>
+                      </div>
+                    </div>
                   )}
                 </div>
 
@@ -163,12 +200,19 @@ function App() {
 
   // Playing / Game Over Screen
   // Get AI info if playing against AI
+  const activeAIPlayer = gameState.aiPlayer
+    ? aiPlayers.find(ai => ai.id === gameState.aiPlayer?.aiPlayerId)
+    : undefined;
+
   const aiInfo = gameState.aiPlayer
     ? {
-        name: aiPlayers.find(ai => ai.id === gameState.aiPlayer?.aiPlayerId)?.name || 'AI Player',
+        name: activeAIPlayer?.name || 'AI Player',
         color: gameState.aiPlayer.aiColor,
+        statistics: activeAIPlayer?.statistics,
       }
     : undefined;
+
+  const shouldShowGameOverModal = gameState.gameOver && !hasClosedGameOverModal;
 
   return (
     <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-8">
@@ -182,12 +226,14 @@ function App() {
       )}
 
       {/* Game Over Modal */}
-      {showGameOverModal && gameState.gameOver && (
+      {shouldShowGameOverModal && (
         <GameOverModal
           winner={gameState.winner}
           score={gameState.score}
-          onPlayAgain={handleReset}
-          onClose={() => setShowGameOverModal(false)}
+          onPlayAgain={() => {
+            handleResetWithRefresh();
+          }}
+          onClose={() => setHasClosedGameOverModal(true)}
           aiInfo={gameState.aiPlayer ? { color: gameState.aiPlayer.aiColor } : undefined}
         />
       )}
@@ -207,7 +253,7 @@ function App() {
           score={gameState.score}
           gameOver={gameState.gameOver}
           winner={gameState.winner}
-          onReset={handleReset}
+          onReset={handleResetWithRefresh}
           isAIThinking={gameState.isLoading && gameState.aiPlayer !== undefined}
           aiInfo={aiInfo}
         />
@@ -217,5 +263,3 @@ function App() {
 }
 
 export default App;
-
-
